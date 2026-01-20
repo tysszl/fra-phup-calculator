@@ -324,6 +324,7 @@
         .phase-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
         .phase-table th {
@@ -341,8 +342,16 @@
             text-align: right;
         }
 
+        #col-ec {
+            width: 160px;
+        }
+
         #col-gpg {
-            min-width: 70px;
+            width: 200px;
+        }
+
+        #col-result {
+            width: 120px;
         }
 
         /* Clickable unit toggle in column header */
@@ -470,8 +479,8 @@
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 0 center;
-            padding-right: 18px;
+            background-position: right 8px center;
+            padding-right: 28px;
         }
 
         .recipe-select:focus {
@@ -667,6 +676,12 @@
             .ec-input {
                 width: 50px;
             }
+
+            #col-ec,
+            #col-gpg,
+            #col-result {
+                width: auto;
+            }
         }
     </style>
 </head>
@@ -752,7 +767,7 @@
                 <thead>
                     <tr>
                         <th>Recipe</th>
-                        <th>EC</th>
+                        <th id="col-ec">EC</th>
                         <th id="col-gpg">g/gal</th>
                         <th id="col-result">
                             <span class="unit-toggle" onclick="toggleUnit()" title="Click to switch units">
@@ -899,6 +914,7 @@
             renderPhaseRows();
             setupEventListeners();
             loadFromURL();
+            detectAndHighlightPreset();
             calculateAll();
         });
 
@@ -1013,6 +1029,33 @@
                 }
             }
             calculateAll();
+        }
+
+        function detectAndHighlightPreset() {
+            let allHigh = true;
+            let allStd = true;
+
+            for (let i = 0; i < phases.length; i++) {
+                const recipeSelect = document.getElementById(`recipe-${i}`);
+                const phase = getPhaseById(recipeSelect.value);
+                const ec = parseFloat(document.getElementById(`ec-${i}`).value);
+
+                if (isNaN(ec)) {
+                    allHigh = false;
+                    allStd = false;
+                    break;
+                }
+                if (ec !== phase.ecHigh) allHigh = false;
+                if (ec !== phase.ecStd) allStd = false;
+            }
+
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (allHigh) {
+                document.querySelector('.preset-btn[onclick*="high"]').classList.add('active');
+            } else if (allStd) {
+                document.querySelector('.preset-btn[onclick*="standard"]').classList.add('active');
+            }
         }
 
         function getPhaseById(id) {
