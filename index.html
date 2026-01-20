@@ -457,13 +457,14 @@
         /* Recipe dropdown */
         .recipe-select {
             background: transparent;
-            border: none;
+            border: 1px solid #2dd4bf;
+            border-radius: 4px;
             color: #fff;
             font-weight: 600;
             font-size: 0.95rem;
             font-family: inherit;
             cursor: pointer;
-            padding: 4px 0;
+            padding: 4px 8px;
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
@@ -987,7 +988,7 @@
         function getStockConcentration() {
             const selected = document.querySelector('input[name="stock-conc"]:checked');
             if (selected.value === 'custom') {
-                return parseFloat(document.getElementById('custom-stock').value) || 50;
+                return parseFloat(document.getElementById('custom-stock').value);
             }
             return parseFloat(selected.value);
         }
@@ -1052,7 +1053,11 @@
                     resultEl.textContent = totalGrams.toFixed(1);
                     resultUnitEl.textContent = 'g';
                 } else {
-                    // Injection rate
+                    // Injection rate - need valid stock concentration
+                    if (stockConc <= 0) {
+                        resultEl.textContent = '--';
+                        continue;
+                    }
                     const mlPerGal = (gpg / stockConc) * 3785.41;
                     if (injectionUnit === 'mlgal') {
                         resultEl.textContent = mlPerGal.toFixed(1);
