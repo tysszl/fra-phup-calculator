@@ -1,0 +1,6 @@
+# Local reference files
+whats-new.md
+*.xlsx
+
+# OS files
+.DS_Store
