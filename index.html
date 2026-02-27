@@ -526,6 +526,96 @@
             display: block;
         }
 
+        /* Actionable Column Label */
+        .action-col-label {
+            display: block;
+            font-size: 0.6rem;
+            color: #2dd4bf;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+            text-align: right;
+        }
+
+        /* De-emphasize g/gal intermediate column */
+        .gpg-value {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #888;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+        }
+
+        /* Mixing Mode Info Drawer */
+        .section-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .section-title-row .section-title {
+            margin-bottom: 0;
+        }
+
+        .info-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.3);
+            color: #888;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            flex-shrink: 0;
+            font-family: inherit;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .info-btn:hover,
+        .info-btn.active {
+            border-color: #2dd4bf;
+            color: #2dd4bf;
+            background: rgba(45, 212, 191, 0.1);
+        }
+
+        .info-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, margin 0.3s ease;
+            margin-bottom: 0;
+        }
+
+        .info-drawer.open {
+            max-height: 500px;
+            margin-bottom: 16px;
+        }
+
+        .info-drawer-content {
+            background: rgba(45, 212, 191, 0.04);
+            border: 1px solid rgba(45, 212, 191, 0.15);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-top: 8px;
+        }
+
+        .info-drawer-content p {
+            font-size: 0.85rem;
+            color: #ccc;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .info-drawer-content p + p {
+            margin-top: 10px;
+        }
+
         /* Export Section */
         .export-section {
             display: flex;
@@ -745,9 +835,34 @@
             </div>
         </div>
 
+        <!-- RO Membrane Note -->
+        <div class="collapsible info-section">
+            <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                <div class="collapsible-icon">&#128167;</div>
+                <div class="collapsible-title">RO Water &amp; Alkalinity Creep</div>
+                <svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+            <div class="collapsible-content">
+                <p style="margin-bottom: 10px;">As RO membranes age and approach their replacement threshold, they allow more carbonate and alkalinity to pass through. This gradually raises the natural buffering capacity of your source water — a phenomenon called <strong style="color: #fff;">alkalinity creep</strong>.</p>
+                <p style="margin-bottom: 10px;">The practical effect: your pH Up demand drops over time without any change to your feed recipe. If you notice you're using less pH Up than usual, your membranes may be degrading.</p>
+                <p><strong style="color: #fff;">What to do:</strong> You can lower your standing pH target slightly as membranes age to account for the extra alkalinity passing through. When membranes are eventually replaced, pH Up demand will jump back up to baseline — so recalculate after any membrane change.</p>
+            </div>
+        </div>
+
         <!-- Main Calculator -->
         <div class="calculator-card">
-            <div class="section-title">How are you mixing Front Row pH Up?</div>
+            <div class="section-title-row">
+                <div class="section-title">How are you mixing Front Row pH Up?</div>
+                <button class="info-btn" onclick="toggleInfoDrawer('mode-drawer', this)" aria-label="What's the difference between these mixing modes?">?</button>
+            </div>
+            <div class="info-drawer" id="mode-drawer">
+                <div class="info-drawer-content">
+                    <p><strong style="color:#fff;">Direct to Reservoir:</strong> You're adding pH Up powder directly to your batch tank or reservoir at working strength. The calculator tells you exactly how many grams to add based on your reservoir size.</p>
+                    <p><strong style="color:#fff;">Stock Concentrate:</strong> You've pre-mixed pH Up into a concentrated stock solution that gets injected by dosing equipment. The calculator shows your injection rate (mL/gal or %) based on your stock concentration. Choose the preset that matches your injector, or enter a custom concentration.</p>
+                </div>
+            </div>
 
             <div class="segment-control">
                 <button class="segment-btn active" data-mode="dtr">Direct to Reservoir</button>
@@ -766,15 +881,15 @@
                 <div class="stock-options">
                     <div class="stock-option">
                         <input type="radio" name="stock-conc" id="stock-20" value="20" checked>
-                        <label for="stock-20">20 g/gal (D14MZ2 or similar)</label>
+                        <label for="stock-20">20 g/gal stock concentrate (D14MZ2 or similar)</label>
                     </div>
                     <div class="stock-option">
                         <input type="radio" name="stock-conc" id="stock-100" value="100">
-                        <label for="stock-100">100 g/gal (D14MZ3000 or similar)</label>
+                        <label for="stock-100">100 g/gal stock concentrate (D14MZ3000 or similar)</label>
                     </div>
                     <div class="stock-option">
                         <input type="radio" name="stock-conc" id="stock-custom" value="custom">
-                        <label for="stock-custom">Custom:</label>
+                        <label for="stock-custom">Custom stock concentrate:</label>
                         <input type="number" class="custom-input" id="custom-stock" value="50" min="1" max="200">
                         <span class="setting-unit">g/gal</span>
                     </div>
@@ -796,6 +911,7 @@
                         <th id="col-ec">EC</th>
                         <th id="col-gpg">g/gal</th>
                         <th id="col-result">
+                            <span class="action-col-label" id="action-label">use this</span>
                             <span class="unit-toggle" onclick="toggleUnit()" title="Click to switch units">
                                 <span id="unit-label">Total</span>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -964,7 +1080,7 @@
                         </div>
                     </td>
                     <td class="result-cell">
-                        <span class="result-value" id="gpg-${index}">--</span>
+                        <span class="gpg-value" id="gpg-${index}">--</span>
                         <span class="result-unit">g/gal</span>
                         <div class="result-warning" id="warn-${index}">Outside tested range</div>
                     </td>
@@ -1005,12 +1121,15 @@
             // Update column header unit label and toggle state
             const unitToggle = document.querySelector('.unit-toggle');
             const unitLabel = document.getElementById('unit-label');
+            const actionLabel = document.getElementById('action-label');
             if (currentMode === 'dtr') {
                 unitLabel.textContent = 'Total';
                 unitToggle.classList.add('no-toggle');
+                actionLabel.textContent = 'add this';
             } else {
                 unitLabel.textContent = injectionUnit === 'mlgal' ? 'ml/gal' : '%';
                 unitToggle.classList.remove('no-toggle');
+                actionLabel.textContent = 'inject this';
             }
         }
 
@@ -1151,6 +1270,11 @@
 
         function toggleCollapsible(header) {
             header.parentElement.classList.toggle('open');
+        }
+
+        function toggleInfoDrawer(drawerId, btn) {
+            document.getElementById(drawerId).classList.toggle('open');
+            btn.classList.toggle('active');
         }
 
         function copySummary() {
