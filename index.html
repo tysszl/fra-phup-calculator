@@ -1207,6 +1207,13 @@
             return phases.find(p => p.id === id);
         }
 
+        // AIDEV-NOTE: Adaptive precision for gram values — prevents rounding errors at small reservoir sizes (e.g. 1 gal)
+        function formatGrams(g) {
+            if (g >= 10) return g.toFixed(1);
+            if (g >= 1) return g.toFixed(2);
+            return g.toFixed(3);
+        }
+
         function calculateAll() {
             const reservoirSize = parseFloat(document.getElementById('reservoir-size').value) || 100;
             const stockConc = getStockConcentration();
@@ -1238,7 +1245,7 @@
                 // Calculate result based on mode
                 if (currentMode === 'dtr') {
                     const totalGrams = gpg * reservoirSize;
-                    resultEl.textContent = totalGrams.toFixed(1);
+                    resultEl.textContent = formatGrams(totalGrams);
                     resultUnitEl.textContent = 'g';
                 } else {
                     // Injection rate - need valid stock concentration
@@ -1316,7 +1323,7 @@
 
                 let resultStr;
                 if (currentMode === 'dtr') {
-                    resultStr = `${(gpg * reservoirSize).toFixed(1)} g`;
+                    resultStr = `${formatGrams(gpg * reservoirSize)} g`;
                 } else {
                     const mlPerGal = (gpg / stockConc) * 3785.41;
                     if (injectionUnit === 'mlgal') {
